@@ -1,0 +1,52 @@
+{
+  "id": "678811b6b1752",
+  "version": "1.1.0",
+  "name": "Segment",
+  "description": "The Segment app seamlessly integrates with Teachfloor to track user interaction events and provide actionable analytics.",
+  "distribution_type": "public",
+  "post_install_action": {
+    "type": "settings"
+  },
+  "ui_extension": {
+    "views": [
+      {
+        "viewport": "settings",
+        "component": "AppSettings"
+      }
+    ]
+  },
+  "permissions": [
+    {
+      "permission": "appdata_read",
+      "purpose": "Store write key to load segment analytics"
+    },
+    {
+      "permission": "appdata_write",
+      "purpose": "Get context data to enhance segment events"
+    },
+    {
+      "permission": "userdata_read",
+      "purpose": "Get context data to enhance segment events"
+    },
+    {
+      "permission": "userdata_write",
+      "purpose": "Get context data to enhance segment events"
+    },
+    {
+      "permission": "user_events_read",
+      "purpose": "Needed to track user interactions and pass events to segment"
+    },
+    {
+      "permission": "course_read",
+      "purpose": "needed"
+    },
+    {
+      "permission": "module_read",
+      "purpose": "neede"
+    },
+    {
+      "permission": "element_read",
+      "purpose": "needed"
+    }
+  ]
+}
