@@ -1,6 +1,6 @@
 {
   "name": "Segment",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "The Segment app seamlessly integrates with Teachfloor to track user interaction events and provide actionable analytics.",
   "main": "src/index.js",
   "scripts": {

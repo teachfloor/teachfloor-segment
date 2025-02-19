@@ -42,6 +42,7 @@ const App = () => {
         identify(userContext.id, {
           name: userContext.full_name,
           email: userContext.email,
+          identity_provider: userContext.identity_provider,
         })
 
         initialize()

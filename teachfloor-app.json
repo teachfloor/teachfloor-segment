@@ -1,6 +1,6 @@
 {
   "id": "678811b6b1752",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Segment",
   "description": "The Segment app seamlessly integrates with Teachfloor to track user interaction events and provide actionable analytics.",
   "distribution_type": "public",
