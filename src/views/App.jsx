@@ -20,10 +20,13 @@ const App = () => {
   const userData = useMemo(() => ({ ...userContext }), [userContext.id])
 
   /**
-   * Retrieve Segment write key and load Segment Analytics
+   * Retrieve Segment write key, user id source and load Segment Analytics
    */
   useEffect(() => {
-    retrieve('write_key').then((writeKey) => {
+    Promise.all([
+      retrieve('write_key'),
+      retrieve('user_id_source')
+    ]).then(([writeKey, userIdSource]) => {
       if (writeKey) {
 
         /**
@@ -37,9 +40,28 @@ const App = () => {
         load(writeKey)
 
         /**
+         * Determine the user id to use based on the user_id_source setting
+         */
+        let userId = userContext.id
+        switch (userIdSource) {
+          case 'identity_provider':
+            if (userContext?.identity_provider?.user_id) {
+              userId = userContext.identity_provider.user_id
+            } else {
+              console.error('Identity Source not found, reverting back to Teachfloor User ID')
+            }
+            break
+
+          case 'teachfloor':
+          default:
+            userId = userContext.id
+            break
+        }
+
+        /**
          *
          */
-        identify(userContext.id, {
+        identify(userId, {
           name: userContext.full_name,
           email: userContext.email,
           identity_provider: userContext.identity_provider,
