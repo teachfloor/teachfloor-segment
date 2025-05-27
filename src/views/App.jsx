@@ -13,11 +13,35 @@ import { load, identify, page, track } from '../analytics'
 const App = () => {
   const { userContext, environment } = useExtensionContext()
   const [enableTracking, setEnableTracking] = useState(false)
+  const [userIdSource, setUserIdSource] = useState(null)
 
   /**
    * Memoize userContext to avoid unnecessary rerender
    */
   const userData = useMemo(() => ({ ...userContext }), [userContext.id])
+
+  /**
+   * Memoize userId
+   */
+  const userId = useMemo(() => {
+    if (enableTracking && userData && userIdSource) {
+      switch (userIdSource) {
+        case 'identity_provider':
+          if (userData?.identity_provider?.user_id) {
+            return userData.identity_provider.user_id
+          } else {
+            console.error('Identity Source not found')
+            return null
+          }
+
+        case 'teachfloor':
+        default:
+          return userData.id
+      }
+    }
+
+    return null
+  }, [enableTracking, userData, userIdSource])
 
   /**
    * Retrieve Segment write key, user id source and load Segment Analytics
@@ -35,37 +59,14 @@ const App = () => {
         setEnableTracking(true)
 
         /**
+         * Set the user id source
+         */
+        setUserIdSource(userIdSource)
+
+        /**
          * Load segment analytics
          */
         load(writeKey)
-
-        /**
-         * Determine the user id to use based on the user_id_source setting
-         */
-        let userId = userContext.id
-        switch (userIdSource) {
-          case 'identity_provider':
-            if (userContext?.identity_provider?.user_id) {
-              userId = userContext.identity_provider.user_id
-            } else {
-              console.error('Identity Source not found, reverting back to Teachfloor User ID')
-            }
-            break
-
-          case 'teachfloor':
-          default:
-            userId = userContext.id
-            break
-        }
-
-        /**
-         *
-         */
-        identify(userId, {
-          name: userContext.full_name,
-          email: userContext.email,
-          identity_provider: userContext.identity_provider,
-        })
 
         initialize()
       }
@@ -74,15 +75,16 @@ const App = () => {
 
   /**
    * Identify user
+   * Trigger identify whenever the userId changes
    */
   useEffect(() => {
-    if (enableTracking && userData.id) {
-      identify(userData.id, {
+    if (enableTracking && userId) {
+      identify(userId, {
         name: userData.full_name,
         email: userData.email,
       })
     }
-  }, [userData.id])
+  }, [userId])
 
   /**
    * Track page
